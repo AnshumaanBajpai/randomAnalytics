@@ -6,6 +6,7 @@ __email__ = "bajpai.anshumaan@gmail.com"
 
 ## Importing the required objects and libraries
 from randomAnalyticsApp import app
+from flask import render_template
 
 
 ###############################################################################
@@ -21,6 +22,6 @@ def index():
     None
     
     @returns
-    Renders the webpage
+    Renders the base webpage for this application
     '''
-    return "Hello world!"
+    return render_template('base.html')
