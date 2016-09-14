@@ -13,7 +13,7 @@ from flask import render_template
 ## Defining Web address links
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index/')
 def index():
     '''
     Function that renders the basic front page of the website

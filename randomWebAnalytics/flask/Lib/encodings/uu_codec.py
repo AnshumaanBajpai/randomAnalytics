@@ -126,5 +126,4 @@ def getregentry():
         incrementaldecoder=IncrementalDecoder,
         streamreader=StreamReader,
         streamwriter=StreamWriter,
-        _is_text_encoding=False,
     )
