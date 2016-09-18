@@ -26,6 +26,10 @@
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
 	<!-- end: Favicon -->
+    
+    <!-- start: d3.js -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <!-- end: d3.js -->
 </head>
 
 <body>
@@ -61,17 +65,10 @@
 		</div>
 	</div>
     <!-- end: Header -->
-
-    <h2> Hello World ! </h2>
-    <p> Welcome to random Analytics </p>
     
-    <!-- start: footer -->
-	<footer>
-		<p>
-			<span style="text-align:left;float:left"> Web Application made by <a href="https://www.linkedin.com/in/anshumaan-bajpai/" alt="https://www.linkedin.com/in/anshumaan-bajpai" target="_blank">Anshumaan Bajpai</a></span>
-		</p>
-	</footer>
-    <!-- end: footer -->
+    <!-- start: Main content -->
+    {% block content %}{% endblock %}
+    <!-- end: Main content
     
 	<!-- start: JavaScript-->
     <script src="/static/js/jquery-1.9.1.min.js"></script>
@@ -83,27 +80,36 @@
 	<script src="/static/js/jquery.cookie.js"></script>
 	<script src='/static/js/fullcalendar.min.js'></script>
 	<script src='/static/js/jquery.dataTables.min.js'></script>
-	<script src="/static/js/excanvas.js"></script>
-	<script src="/static/js/jquery.flot.js"></script>
-	<script src="/static/js/jquery.flot.pie.js"></script>
-	<script src="/static/js/jquery.flot.stack.js"></script>
-	<script src="/static/js/jquery.flot.resize.min.js"></script>
+	<!--<script src="/static/js/excanvas.js"></script>-->
+	<!--<script src="/static/js/jquery.flot.js"></script>-->
+	<!--<script src="/static/js/jquery.flot.pie.js"></script>-->
+	<!--<script src="/static/js/jquery.flot.stack.js"></script>-->
+	<!--<script src="/static/js/jquery.flot.resize.min.js"></script>-->
 	<script src="/static/js/jquery.chosen.min.js"></script>
 	<script src="/static/js/jquery.uniform.min.js"></script>
-	<script src="/static/js/jquery.cleditor.min.js"></script>
-	<script src="/static/js/jquery.noty.js"></script>
+	<!--<script src="/static/js/jquery.cleditor.min.js"></script>-->
+	<!--<script src="/static/js/jquery.noty.js"></script>-->
 	<script src="/static/js/jquery.elfinder.min.js"></script>
-	<script src="/static/js/jquery.raty.min.js"></script>
-	<script src="/static/js/jquery.iphone.toggle.js"></script>
-	<script src="/static/js/jquery.uploadify-3.1.min.js"></script>
-	<script src="/static/js/jquery.gritter.min.js"></script>
-	<script src="/static/js/jquery.imagesloaded.js"></script>
+	<!--<script src="/static/js/jquery.raty.min.js"></script>-->
+	<!--<script src="/static/js/jquery.iphone.toggle.js"></script>-->
+	<!--<script src="/static/js/jquery.uploadify-3.1.min.js"></script>-->
+	<!--<script src="/static/js/jquery.gritter.min.js"></script>-->
+	<!--<script src="/static/js/jquery.imagesloaded.js"></script>-->
 	<script src="/static/js/jquery.masonry.min.js"></script>
 	<script src="/static/js/jquery.knob.modified.js"></script>
-	<script src="/static/js/jquery.sparkline.min.js"></script>
-	<script src="/static/js/counter.js"></script>
+	<!--<script src="/static/js/jquery.sparkline.min.js"></script>-->
+	<!--<script src="/static/js/counter.js"></script>-->
 	<script src="/static/js/retina.js"></script>
     <script src="/static/js/custom.js"></script>
 	<!-- end: JavaScript-->
+    
+    <!-- start: footer -->
+	<footer>
+		<p>
+			<span style="text-align:left;float:left"> Web Application made by <a href="https://www.linkedin.com/in/anshumaan-bajpai/" alt="https://www.linkedin.com/in/anshumaan-bajpai" target="_blank">Anshumaan Bajpai</a></span>
+		</p>
+	</footer>
+    <!-- end: footer -->
+
 </body>
 </html>

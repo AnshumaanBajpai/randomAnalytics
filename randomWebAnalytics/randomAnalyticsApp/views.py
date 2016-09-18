@@ -24,4 +24,4 @@ def index():
     @returns
     Renders the base webpage for this application
     '''
-    return render_template('base.html')
+    return render_template('index.html')
