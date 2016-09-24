@@ -43,11 +43,7 @@ def getETTMatrixJson(fpath_input, fpath_API):
     
     # Formatting the query and obtaining the response
     thisAPIQuery = genAPIQuery.format(**APIQueryDict)
-    APIQueryResponse = requests.get(thisAPIQuery)
-    
-    print APIQueryResponse.json()
-
-    return None
+    return requests.get(thisAPIQuery).json()
 
 if __name__ == "__main__":
-    getETTMatrixJson(GMAQueryPath, GMAKeyPath)
+    print getETTMatrixJson(GMAQueryPath, GMAKeyPath)
