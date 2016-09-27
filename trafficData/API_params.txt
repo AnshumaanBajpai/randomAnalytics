@@ -1,5 +1,5 @@
 origin:151 E Randolph St, Chicago, IL 60601|25 E Algonquin Rd, Des Plaines, IL 60016
-destinations:151 E Randolph St, Chicago, IL 60601|25 E Algonquin Rd, Des Plaines, IL 60016|840 E Grand Ave, Chicago, IL 60611|111 S Michigan Ave, Chicago, IL 60603|2001 N Clark St, Chicago, IL 60614|1400 S Lake Shore Dr, Chicago, IL 60605|1060 W Addison St, Chicago, IL 60613
+destinations:151 E Randolph St, Chicago, IL 60601|25 E Algonquin Rd, Des Plaines, IL 60016|111 S Michigan Ave, Chicago, IL 60603|2001 N Clark St, Chicago, IL 60614|1060 W Addison St, Chicago, IL 60613|7000 Harlem Ave, Bridgeview, IL 60455|11001 S Doty Ave, Chicago, IL 60628|5700 S Lake Shore Dr, Chicago, IL 60637|5801 S Ellis Ave, Chicago, IL 60637|10000 W O'Hare Ave, Chicago, IL 60666|5700 S Cicero Ave, Chicago, IL 60638|6145 Golf Rd, Morton Grove, IL 60053|777 Casino Center Dr, Hammond, IN 46320
 departure_time:now
 traffic_model:best_guess
 mode:driving

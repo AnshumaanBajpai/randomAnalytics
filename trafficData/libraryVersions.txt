@@ -1,0 +1,5 @@
+###############################################################################
+## This file keeps track of the versions of various libraries and tools used in
+## this work.
+
+MongoDB version: 3.0.x(MMAPv1)

@@ -5,8 +5,10 @@
 
 ## Importing the required objects and libraries
 import os
+import sys
 import time
 import json
+import pymongo
 import crython
 import requests
 import smtplib
@@ -20,6 +22,11 @@ from email.utils import COMMASPACE, formatdate
 GMAQueryPath = r'./API_params.txt'
 GMAKeyPath = r'./GMA_key.txt'
 genAPIQuery = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={origin}&destinations={destinations}&departure_time={departure_time}&traffic_model={traffic_model}&key={key}"
+passwdPath = r'./senderPasswd.txt'
+with open(passwdPath, 'r') as spt:
+    passwd = spt.readline()
+## Path to MongoDB database in mLab
+MONGODB_URI = 'mongodb://AnshumaanBajpaiIBM:'+passwd+'@ds041546.mlab.com:41546/trafficdata_ibm'
 
 
 ## Function to send the json object as an attachment to the email
@@ -55,8 +62,6 @@ def send_mail(sendFrom, sendTo, subject, text, attachmentString, attachmentName)
     smtp = smtplib.SMTP("smtp.gmail.com", 587)
     smtp.ehlo()
     smtp.starttls()
-    with open("senderPasswd.txt", 'r') as spt:
-        passwd = spt.readline()
 
     # Adding the credentials and sending the email
     smtp.login('anshumaanbajpaiibm@gmail.com', passwd)
@@ -65,20 +70,78 @@ def send_mail(sendFrom, sendTo, subject, text, attachmentString, attachmentName)
     
     return None
 
+
+## Function to convert the response from API into an list that can be loaded
+## directly to a mongoDB database in appropriate format
+def convertMatToDict(MatrixData):
+    '''
+    Converts the JSON data obtained from the API into a list of dictionaries that
+    can easily be loaded into a database
+    
+    @params
+    MatrixData: A JSON object as obtained from the Google Maps Distance Matrix API
+    
+    @returns
+    dictData: A list of dictionaries where each data point is the complete
+              information of one trip
+    '''
+    dictData = [] # The list that is returned
+    
+    # We iterate through all the origin distance values and populate the dictData
+    for origin_id, origin_string in enumerate(MatrixData["origin_addresses"]):
+        for destination_id, destination_string in enumerate(MatrixData["destination_addresses"]):
+            this_data = MatrixData["rows"][origin_id]["elements"][destination_id]
+            this_data_dict = {"origin":origin_string,
+                              "destination":destination_string,
+                              "duration(s)":this_data["duration"]["value"],
+                              "duration_in_traffic(s)":this_data["duration_in_traffic"]["value"],
+                              "distance(m)":this_data["distance"]["value"],
+                              "timestamp":MatrixData["queryTime"]}
+            dictData.append(this_data_dict)
+    
+    return dictData
+
+
+# Send the info to the MongoDB
+def sendToMongoDB(dataList):
+    '''
+    Sends the list of dictionaries to the mongoDB database mentioned in
+    global constants section of this script
+    
+    @params
+    dataList: List of dictionaries that will be added to the mongoDB database
+    
+    @returns
+    None
+    '''
+    # Connecting to the proper database
+    client = pymongo.MongoClient(MONGODB_URI)
+    db = client.get_default_database()
+    
+    # First we'll add a collection to the database
+    trips = db['trips']
+    # Insert the data
+    trips.insert(dataList)
+    # Close the connection
+    client.close()
+
+    
 ## Function to send the data query and obtain the results
 ## Fires twice a minute
-@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, minute=range(0,60,30))
+@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, second=range(0,60,30))
 def getETTMatrixJson(fpath_input, fpath_API):
     '''
     Obtains the Estimated Trip Time matrix for a given API query. The API
-    query is generated using the data from an input file
+    query is generated using the data from an input file. The response is
+    converted to a list of dictionary format and sent to an external MongoDB
+    database
     
     @params
     fpath_input: Path to the input file which has the basic parameters for API query
     fpath_API: Path to the API Key which is hidden and not shared with everyone
     
     @return
-    JSON object which contains the response from the API query
+    None
     '''
     APIQueryDict = {}
 
@@ -91,18 +154,51 @@ def getETTMatrixJson(fpath_input, fpath_API):
             inputData = line.split(":")
             APIQueryDict[inputData[0]] = inputData[1].replace(" ", "+").rstrip("\n")
     
-    # Formatting the query and obtaining the response
+    # Creating another dictionary for the queries in the reverse direction
+    # Due to constraints on the number of free queries that we have from Google API,
+    # We are unable to work with full n*n matrix and we work only with two matrices,
+    # one of which is n*2 and the other is 2*n
+    APIQueryDictRev = {}
+    for key in APIQueryDict:
+        if key == "origin":
+            APIQueryDictRev[key] = APIQueryDict["destinations"]
+        elif key == "destinations":
+            APIQueryDictRev[key] = APIQueryDict["origin"]
+        else:
+            APIQueryDictRev[key] = APIQueryDict[key]
+            
+    # Formatting the queries and obtaining the response
     thisAPIQuery = genAPIQuery.format(**APIQueryDict)
+    thisAPIQueryRev = genAPIQuery.format(**APIQueryDictRev)
+    
     queryTime = time.strftime("%m-%d-%Y_%H:%M:%S_%A")
-    outFileName = time.strftime("%Y%m%d-%H%M%S")+'.json'
+    ETTMatrix = requests.get(thisAPIQuery).json() #ETT: Estimated Trip Time        
+
+    queryTimeRev = time.strftime("%m-%d-%Y_%H:%M:%S_%A")
+    ETTMatrixRev = requests.get(thisAPIQueryRev).json()
     
-    ETTMatrix = requests.get(thisAPIQuery).json() #ETT: Estimated Trip Time
     ETTMatrix['queryTime'] = queryTime
-    # Sending the data as an email attachment
-    send_mail(sendFrom="anshumaanbajpaiibm@gmail.com", sendTo=["anshumaanbajpaiibm@gmail.com"],
-              subject="TrafficData", text="From anshumaanbajpaiibm@gmail.com",
-              attachmentString=json.dumps(ETTMatrix, indent=1), attachmentName=outFileName)
+    ETTMatrixRev['queryTime'] = queryTimeRev
+
+    outFileName = time.strftime("%Y%m%d-%H%M%S")+'.json'
+    outFileNameRev = time.strftime("%Y%m%d-%H%M%S")+'Rev.json'
     
+    # Convert ETTMatrix into a dictionary with database friendly format
+    ETTDict = convertMatToDict(ETTMatrix)
+    ETTDictRev = convertMatToDict(ETTMatrixRev)
+
+    # Send the data to AWS mongoDB database
+    sendToMongoDB(ETTDict)
+    sendToMongoDB(ETTDictRev)
+    
+    # Sending the data as an email attachment
+#    send_mail(sendFrom="anshumaanbajpaiibm@gmail.com", sendTo=["anshumaanbajpaiibm@gmail.com"],
+#              subject="TrafficData", text="From anshumaanbajpaiibm@gmail.com",
+#              attachmentString=json.dumps(ETTMatrix, indent=1), attachmentName=outFileName)
+#    send_mail(sendFrom="anshumaanbajpaiibm@gmail.com", sendTo=["anshumaanbajpaiibm@gmail.com"],
+#              subject="TrafficData", text="From anshumaanbajpaiibm@gmail.com",
+#              attachmentString=json.dumps(ETTMatrixRev, indent=1), attachmentName=outFileNameRev)
+        
     return None
 
 # Running the cronjob when called directly
