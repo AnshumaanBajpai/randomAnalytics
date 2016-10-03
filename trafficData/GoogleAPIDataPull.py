@@ -4,8 +4,6 @@
 ###############################################################################
 
 ## Importing the required objects and libraries
-import os
-import sys
 import time
 import json
 import pymongo
@@ -131,7 +129,7 @@ def sendToMongoDB(dataList1, dataList2):
     
 ## Function to send the data query and obtain the results
 ## Fires twice a minute
-@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, fpath_APIRev=GMAKeyPathRev, second=range(0,60,30))
+@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, fpath_APIRev=GMAKeyPathRev, minute=range(2, 61, 2), second=[0])
 def getETTMatrixJson(fpath_input, fpath_API, fpath_APIRev):
     '''
     Obtains the Estimated Trip Time matrix for a given API query. The API
@@ -147,7 +145,6 @@ def getETTMatrixJson(fpath_input, fpath_API, fpath_APIRev):
     None
     '''
     APIQueryDict = {}
-
     # Adding the API key
     with open(fpath_API, 'r') as fpA:
         APIQueryDict['key'] = fpA.readline()

@@ -1,3 +1,7 @@
 trafficData/GMA_key.txt
 trafficData/senderPasswd.txt
 trafficData/GMA_keyRev.txt
+herokuDeploy/GMA_key.txt
+herokuDeploy/senderPasswd.txt
+herokuDeploy/GMA_keyRev.txt
+herokuDeployData
