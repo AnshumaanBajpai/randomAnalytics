@@ -129,7 +129,7 @@ def sendToMongoDB(dataList1, dataList2):
     
 ## Function to send the data query and obtain the results
 ## Fires twice a minute
-@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, fpath_APIRev=GMAKeyPathRev, minute=range(2, 61, 2), second=[0])
+@crython.job(fpath_input=GMAQueryPath, fpath_API=GMAKeyPath, fpath_APIRev=GMAKeyPathRev, minute=range(5, 65, 15), second=[0])
 def getETTMatrixJson(fpath_input, fpath_API, fpath_APIRev):
     '''
     Obtains the Estimated Trip Time matrix for a given API query. The API
@@ -192,9 +192,8 @@ def getETTMatrixJson(fpath_input, fpath_API, fpath_APIRev):
     ETTDictRev = convertMatToDict(ETTMatrixRev)
 
     # Send the data to AWS mongoDB database
-    #print "Sending to Database......."
+    print "Sending to Database......."
     sendToMongoDB(ETTDict, ETTDictRev)
-    #sendToMongoDB(ETTDictRev)
     
     # Sending the data as an email attachment
 #    send_mail(sendFrom="anshumaanbajpaiibm@gmail.com", sendTo=["anshumaanbajpaiibm@gmail.com"],
