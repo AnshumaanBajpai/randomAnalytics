@@ -112,6 +112,14 @@ img {
   max-width: none;
 }
 
+#map {
+    width: 83.3vw;
+    margin-left: auto;
+    margin-right: 0;
+    height: 45vw;
+}
+
+
 button,
 input,
 select,
@@ -3109,6 +3117,7 @@ table th[class*="span"],
 }
 
 .well {
+  text-align:center;
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="mainPage">
+	<div class="container-fluid-full">
+		<div class="row-fluid">	
+			<!-- start: Main Menu -->
+			<div id="sidebar-left" class="span2">
+				<div class="nav-collapse sidebar-nav">
+					<ul class="nav nav-tabs nav-stacked main-menu">
+						<li><a href="index.html"><span class="hidden-tablet" style="color:#0C2340"> Chicago, USA</span></a></li>
+                        <li><a href="index.html"><span class="hidden-tablet" style="color:#0C2340"> New York City, USA</span></a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- end: Main Menu -->
+			
+			<!-- start: Content -->
+            <div id="content" class="span10">
+                <div id="map"></div>           
+            </div>
+			<!-- end: Content -->
+            
+		</div><!--/row-fluid-->
+	</div><!--/container-fluid-full-->
+</div>
+
+<script>
+    function initMap() {
+        var uluru = {lat: 0, lng: 0};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 2,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{GMAPI}}&callback=initMap">
+</script>         
+
+{% endblock %}

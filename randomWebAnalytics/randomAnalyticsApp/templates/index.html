@@ -1,58 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
 <div id="mainPage">
+	<div class="container-fluid-full">
+		<div class="row-fluid">				
+			<!-- start: Content -->
+            <div class="span3">
+                <form class="well">
+              <h3>About me:</h3>
+              <p>Ahoy!,</p>
+              <p>I am Anshumaan Bajpai, a graduate student in the Department of Chemical and Biomolecular Engineering at University of Notre Dame, USA.</p>
+              <p>
+                I hope you enjoyed using this app. In case you have any questions, please feel free to drop me an email at 
+                <span>
+                  <a href="mailto:bajpai.anshumaan@gmail.com">bajpai.anshumaan@gmail.com</a>
+                </span>
+              </p>
+              <p>
+                To know more about my technical background and career interests, please visit my LinkedIn page 
+                <span>
+                  <a target="_blank" href="https://www.linkedin.com/pub/anshumaan-bajpai/19/781/7a1">here</a>
+                </span>
+              </p>
+              <h3>About me:</h3>
+              <p> I am Anshumaan Bajpai, a PhD candidate in the Department of Chemical and Biomolecular Engineering at University of Notre Dame, USA. </p>
+              <p> 
+                I hope you enjoyed the features of this application. In case you have any questions/suggestions, please feel free to drop me an email at 
+                <span>
+                  <a href="mailto:bajpai.anshumaan@gmail.com">bajpai.anshumaan@gmail.com</a>
+                </span>
+                .
+              </p>
+              <p>
+                To know more about my technical background and career interests, please visit my 
+                <span>
+                  <a target="_blank" href="https://www.linkedin.com/in/anshumaan-bajpai/">LinkedIn profile</a>
+                </span>
+                .
+              </p>
+              </form>
+            </div>
+			<!-- end: Content -->
+			<!-- start: Main Menu -->
+			<div class="span9">
+                <img class="img-rounded" src="/static/img/NDStadium.jpg" alt="Notre Dame View" style="width:100%;height:auto;margin:2px 0px">
+			</div>
+			<!-- end: Main Menu -->
+
+		</div><!--/row-fluid-->
+	</div><!--/container-fluid-full-->
 </div>
-<script>
-
-var width = Math.max(960, innerWidth),
-    height = Math.max(500, innerHeight);
-
-var x1 = width / 2,
-    y1 = height / 2,
-    x0 = x1,
-    y0 = y1,
-    i = 0,
-    r = 200,
-    τ = 2 * Math.PI;
-
-var canvas = d3.select("#mainPage").append("canvas")
-    .attr("width", width)
-    .attr("height", height)
-    .on("ontouchstart" in document ? "touchmove" : "mousemove", move);
-
-var context = canvas.node().getContext("2d");
-context.globalCompositeOperation = "lighter";
-context.lineWidth = 2;
-
-d3.timer(function() {
-  context.clearRect(0, 0, width, height);
-
-  var z = d3.hsl(++i % 360, 1, .5).rgb(),
-      c = "rgba(" + z.r + "," + z.g + "," + z.b + ",",
-      x = x0 += (x1 - x0) * .1,
-      y = y0 += (y1 - y0) * .1;
-
-  d3.select({}).transition()
-      .duration(2000)
-      .ease(Math.sqrt)
-      .tween("circle", function() {
-        return function(t) {
-          context.strokeStyle = c + (1 - t) + ")";
-          context.beginPath();
-          context.arc(x, y, r * t, 0, τ);
-          context.stroke();
-        };
-      });
-});
-
-function move() {
-  var mouse = d3.mouse(this);
-  x1 = mouse[0];
-  y1 = mouse[1];
-  d3.event.preventDefault();
-}
-
-</script>
-
-
 {% endblock %}
