@@ -20,6 +20,11 @@
 	<link id="base-style-responsive" href="/static/css/style-responsive.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/static/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/slick/slick-theme.css"/>
+
 	<!-- end: CSS -->
 
 	<!-- start: Favicon -->
@@ -27,9 +32,14 @@
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
 	<!-- end: Favicon -->
     
-    <!-- start: d3.js -->
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <!-- end: d3.js -->
+    <!-- start: basic javascript libraries -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="/static/js/jquery-1.9.1.min.js"></script>
+	<script src="/static/js/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://unpkg.com/isotope-layout@3.0/dist/isotope.pkgd.min.js"></script>
+
+    <!-- end: basic javascript libraries -->
     
 </head>
 
@@ -55,8 +65,9 @@
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
+								<li><a href="/instanalyze/"><i class="fa fa-instagram"></i>  Instagram </a></li>
 								<li><a href="/traffic/"><i class="fa fa-car"></i> Traffic </a></li>
-								<li><a href="/stocks/"><i class="fa fa-bar-chart"></i> Stocks </a></li>
+								<!--<li><a href="/kaggle/"><i class="fa fa-money"></i>  Kaggle </a></li>                              -->
 							</ul>
 						</li>
 						<!-- end: User Dropdown -->
@@ -73,8 +84,7 @@
     <!-- end: Main content
     
 	<!-- start: JavaScript-->
-    <script src="/static/js/jquery-1.9.1.min.js"></script>
-	<script src="/static/js/jquery-migrate-1.0.0.min.js"></script>
+    <script type="text/javascript" src="/static/js/slick/slick.min.js"></script>
     <script src="/static/js/jquery-ui-1.10.0.custom.min.js"></script>
     <script src="/static/js/jquery.ui.touch-punch.js"></script>
 	<script src="/static/js/modernizr.js"></script>
@@ -82,6 +92,7 @@
 	<script src="/static/js/jquery.cookie.js"></script>
 	<script src='/static/js/fullcalendar.min.js'></script>
 	<script src='/static/js/jquery.dataTables.min.js'></script>
+    <script type="text/javascript" src="/static/js/tooltipster.bundle.min.js"></script>
 	<!--<script src="/static/js/excanvas.js"></script>-->
 	<!--<script src="/static/js/jquery.flot.js"></script>-->
 	<!--<script src="/static/js/jquery.flot.pie.js"></script>-->
@@ -108,7 +119,7 @@
     <!-- start: footer -->
 	<footer>
 		<p>
-			<span style="text-align:left;float:left"> Web Application made by <a href="https://www.linkedin.com/in/anshumaan-bajpai/" alt="https://www.linkedin.com/in/anshumaan-bajpai" target="_blank">Anshumaan Bajpai</a></span>
+			<span style="text-align:left;float:left"> Web Application by <a href="https://www.linkedin.com/in/anshumaan-bajpai/" alt="https://www.linkedin.com/in/anshumaan-bajpai" target="_blank" style="color:#333">Anshumaan Bajpai</a></span>
 		</p>
 	</footer>
     <!-- end: footer -->

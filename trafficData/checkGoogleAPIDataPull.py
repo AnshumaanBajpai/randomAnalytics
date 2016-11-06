@@ -28,11 +28,11 @@ def checkMongoDB():
     client = pymongo.MongoClient(MONGODB_URI)
     db = client.get_default_database()
     
-    startTimeStr = "10-08-2016_06:50:00"
+    startTimeStr = "10-25-2016_19:20:00"
     startTime = datetime.datetime.strptime(startTimeStr, '%m-%d-%Y_%H:%M:%S')
     currentTime = datetime.datetime.now()
     numQueries = int((currentTime - startTime).total_seconds()/60/15) + 1
-    expectedEntries = numQueries * 52
+    expectedEntries = numQueries * 48
     
     # First we'll connect to a collection in the database
     trips = db['trips']
@@ -42,8 +42,8 @@ def checkMongoDB():
     
     # Results
     print "Expected Entries: ", expectedEntries
-    print "Found Entries: ", cursor_all.count() - 7020
-    print "OK Entries: ", cursor_ok.count() - 7020
+    print "Found Entries: ", cursor_all.count() - 87772
+    print "OK Entries: ", cursor_ok.count() - 87772
 
     # Close the connection
     client.close()

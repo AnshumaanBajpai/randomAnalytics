@@ -1,0 +1,42 @@
+﻿{% extends "base.html" %}
+{% block content %}
+    <div class="container-fluid-full">
+        <div class="row-fluid">
+            <!-- Form column -->
+            <div class="span7" style="padding-top:20px;padding-right:10px;padding-left:20px">
+                <form role="form" data-toggle="validator" action="/instaResult/" method="post">
+                    <div class="form-group">
+                        <label for="instaq">Enter a username/hashtag:</label>
+                        <input type="text" name="instaquery" class="form-control" id="instaq" placeholder="eg. #IBM" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailEnter">Email Address:</label>
+                        <input type="email" name="emailId" class="form-control" id="emailEnter" placeholder="eg. abc@xyz.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullname">Full Name:</label>
+                        <input type="text" name="full_name" class="form-control" id="fullname" placeholder="eg. John Smith">
+                    </div>
+                    <button type="submit" class="btn btn-default" style="background-color:#04B4F0;color:#ffffff">Submit</button>
+                    <br>
+                    <br>
+                </form>
+                <h3>Inspiration</h3>
+                <p class="text-justify"> This analysis is inspired from the twitter based <span><a target="_blank" href="https://personality-insights-livedemo.mybluemix.net/">personality insights</a></span> provided by IBM Watson. I started working on this towards the end of my internship at IBM.</p>
+                <p class="text-justify"> Since analayzing all the images from an instagram account takes a while, the application provides instant result for the queries that cached. For other queries that are submitted, the user is expected to provide their email ID and he/she will receive an email as soon as the analysis is done and the results are ready for display.</p>
+                <p class="text-justify"> Please input one of the queries from the following to see a sample analysis. </p>
+                <hr>
+                <h3>Cached queries</h3>
+                <ul> <!-- unordered list -->
+                    <li>@victoriabeckham</li>
+                </ul>
+            </div>
+            <!-- Form column ends -->
+            <!-- Watson_Logo -->
+            <div class="span5" style="padding-top:4px;padding-right:1px;padding-left:1px;padding-bottom:4px">
+                <img src="../static/img/Watson_Logo.jpg" class="img-responsive" alt="Watson_Logo">
+            </div>
+            <!-- Watson_Logo ends -->
+        </div>
+    </div>
+{% endblock %}

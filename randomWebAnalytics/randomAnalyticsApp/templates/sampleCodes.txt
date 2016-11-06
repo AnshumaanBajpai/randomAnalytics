@@ -1,0 +1,86 @@
+############################################################
+############################################################
+## This file has some sample codes for various aspects of html
+############################################################
+############################################################
+
+######## Plotting a histogram using d3.js
+                                        <!-- commenting out the likes distribution as its not very effective
+                                            <div class="span2">
+                                                <div style="width:100%;padding-top:100%;position:relative">
+                                                    <div id="lsvgparent" style="position:absolute;top:0;bottom:0;left:0;right:0" class="fancy-tooltip" title="No. of likes Distribution">
+                                                        <svg>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>                                        
+                                        -->
+                                        <!-- commenting out the comments distribution as its not very effective
+                                            <div class="span2">
+                                                <div style="width:100%;padding-top:100%;position:relative">
+                                                    <div id="csvgparent" style="position:absolute;top:0;bottom:0;left:0;right:0" class="fancy-tooltip" title="No. of comments Distribution">
+                                                        <svg>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        -->
+
+        <!-- Histogram for most liked and most commented pics
+        var likes_data = jQuery.parseJSON('{{profile["l_list"]|tojson}}');
+        var comments_data = jQuery.parseJSON('{{profile["c_list"]|tojson}}');
+        var formatCount = d3.format(",.0f");
+
+        // function to plot the distribution of likes and comments over the pics
+        function plothist(pCont, dataArr){
+            var spWidth = $(pCont).width()*0.98;
+            var svg = d3.select(pCont+" svg")
+                        .attr("width", spWidth)
+                        .attr("height", spWidth);                     
+    
+            var svg = d3.select(pCont+" svg"),
+                margin = {top: parseInt(0.01*spWidth), right: parseInt(0.05*spWidth), bottom: parseInt(0.1*spWidth), left: parseInt(0.05*spWidth)},
+                width = +spWidth - margin.left - margin.right,
+                height = +spWidth - margin.top - margin.bottom,
+                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var x = d3.scaleLinear()
+                      .domain([d3.min(dataArr), d3.max(dataArr)])
+                      .rangeRound([0, width]);
+
+            var bins = d3.histogram()
+                         .domain(x.domain())
+                         .thresholds(x.ticks(50))
+                         (dataArr);
+
+            var y = d3.scaleLinear()
+                      .domain([0, d3.max(bins, function(d) { return d.length; })])
+                      .range([height, 0]);
+
+            var bar = g.selectAll(".bar")
+                       .data(bins)
+                       .enter().append("g")
+                               .attr("class", "bar")
+                               .attr("transform", function(d){return "translate("+x(d.x0)+","+y(d.length)+")";});
+                               
+            bar.append("rect")
+                .attr("x", 1)
+                .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+                .attr("height", function(d) { return height - y(d.length); });
+
+/*            bar.append("text")
+                .attr("dy", ".75em")
+                .attr("y", 6)
+                .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+                .attr("text-anchor", "middle")
+                .text(function(d) { return formatCount(d.length); });
+*/
+            g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).ticks(3));
+        }
+        
+        plothist("#lsvgparent", likes_data);
+        plothist("#csvgparent", comments_data);
+                                        

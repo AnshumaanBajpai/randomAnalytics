@@ -1,0 +1,404 @@
+﻿{% extends "base.html" %}
+{% block content %}
+    <!-- Results Display -->
+    <div id="page-wrapper">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center" style="padding-top:1px;padding-bottom:1px">
+                    <h2><i class="fa fa-search"></i> {{instaquery|safe}} </h2>
+                    <!-- <h6> Last Crawled: {{profile['last_crawled']|safe}} </h6> -->
+                </div>
+                <div class="panel-body" style="padding:10px">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#basicAnalysis" data-toggle="tab">Basics</a></li>
+                        <li class=""><a href="#colortab" data-toggle="tab">Color</a></li>
+                        <li class=""><a href="#texttab" data-toggle="tab">Text</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <!-- Basics Tab -->
+                        <div class="tab-pane fade active in" id="basicAnalysis">
+                            <div class="panel panel-default">
+                            <!-- Row 1 -->
+                                <div class="panel-body">
+                                    <div class="row-fluid">
+                                        <div class="span3">
+                                            <h2>{{profile['fullname']|safe}}</h2>
+                                            <p><strong>About: </strong> {{profile['bio']|safe}} </p>
+                                            <p><strong>Total posts: </strong> {{profile['total_posts']|safe}} </p>
+                                        </div>       
+                                        <div class="span2">
+                                            <br>
+                                            <br>
+                                            <p>Followers: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['followers']|safe}}</strong></h4>
+                                            <p>Following: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['following']|safe}}</strong></h4>
+                                        </div>
+                                        <div class="span2">
+                                            <br>
+                                            <br>
+                                            <p>Total Comments: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['total_comments']|safe}}</strong></h4>
+                                            <p>Comments/Post: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['avg_comments']|safe}}</strong></h4>
+                                        </div>
+                                        <div class="span2">
+                                            <br>
+                                            <br>
+                                            <p>Total Likes: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['total_likes']|safe}}</strong></h4>
+                                            <p>Likes/Post: </p>
+                                            <h4 class="Numvalue"><strong>{{profile['avg_likes']|safe}}</strong></h4>
+                                        </div>
+                                        <div class="span3 text-center">
+                                            <a id="navlinks" target="_blank" href="https://www.instagram.com/{{profile['username']|safe}}/">
+                                            <img src={{profile['profile_pic']|safe}} alt="Profile Pic" class="center-block img-circle img-responsive fancy-tooltip">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!-- Row 1 ends-->
+                                <hr style="margin-top:0px;margin-bottom:0px">
+                            <!-- Row 2-->    
+                                <div class="panel-body">
+                                    <h3 style="text-align:left"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Most Liked </h3>
+                                    <div class="row-fluid">
+                                        {% for img_det in profile['top_liked'] %}
+                                            <div class="span2">
+                                                <div class="img">
+                                                    <a target="_blank" href={{img_det[0]|safe}} style="position:absolute;top:0;bottom:0;left:0;right:0">
+                                                        <img src={{img_det[0]|safe}} alt="Liked pics" class="img-responsive fancy-tooltip" title="<div>Likes: {{img_det[1]|safe}}<br>Comments: {{img_det[2]|safe}}</div>" style="width:98%;height:98%;white-space: pre-line;">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            <!-- Row 2 ends-->
+                                <hr style="margin-top:0px;margin-bottom:0px">
+                            <!-- Row 3-->
+                                <div class="panel-body">
+                                    <h3 style="text-align:left"><i class="fa fa-comments-o" aria-hidden="true"></i> Most Commented </h3>
+                                    <div class="row-fluid">
+                                        {% for img_det in profile['top_commented'] %}
+                                            <div class="span2">
+                                                <div class="img">
+                                                    <a target="_blank" href={{img_det[0]|safe}} style="position:absolute;top:0;bottom:0;left:0;right:0">
+                                                        <img src={{img_det[0]|safe}} alt="Commented pics" class="img-responsive fancy-tooltip" title="<div>Likes: {{img_det[1]|safe}}<br>Comments: {{img_det[2]|safe}}</div>" style="width:98%;height:98%">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            <!-- Row 3 ends-->                                
+                            </div>
+                        </div>
+                <!---------------------------- Basics tab ends -------------------------------------->
+                <!---------------------------- Visuals for color tab ---------------------------->
+                        <div class="tab-pane fade" id="colortab">
+                            <div class="panel panel-default">
+                                <!-- Row 1 of color tab -->
+                                <div class="panel-body">
+                                    <h3 style="text-align:center"> Dominant Colors </h3>
+                                    <div class="row-fluid">
+                                        <div class="span1" style="background:#ffffff;border:0px"></div>
+                                        {% for key,value in colorPalette_src.iteritems() %}
+                                            <div class="span1">
+                                                <div class="colbox" style="background:#ffffff;">
+                                                    <div class="colpartial fancy-tooltip" style="background:rgb{{value}}">
+                                                    </div>
+                                                    <p style="text-align:center;margin-top:5px">{{key}}</p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="span1" style="background:#ffffff;border:0px"></div>
+                                    </div>
+                                </div>
+                                <!-- Row 1 of color tab ends-->
+                                <!-- Isotope image gallery -->
+                                <div id="isotopeImg">                               
+                                </div>
+                                <!-- Isotope image gallery ends-->
+                                <hr style="margin-top:50px;margin-bottom:2px">
+                                <span style="display:block; height: 10px;"></span>
+                                <!-- Row 2 of color tab -->
+                                <div class="panel-body">
+                                    <div class="row-fluid">
+                                        <div class="span1" style="background:#ffffff;border:0px"></div>
+                                        <div class="span3 fancy-tooltip" style="text-align:center;border:1px solid rgba(0, 0, 0, 0.2)" id="tSNEparent" title="Click a color to see corresponding images">
+                                            <span style="display:block;height:12px;"></span>
+                                            <h3 style="margin:auto"> Color Clusters </h3>
+                                            <span style="display:block;height:2px;"></span>
+                                            <div id="tSNE" style="margin:auto">
+                                            </div>
+                                        </div>
+                                        <div class="span7" style="text-align:center;border:1px solid rgba(0, 0, 0, 0.2)" id="carouselparent">
+                                            <span style="display:block;height:12px;"></span>
+                                            <h3 style="margin:auto"> Selected Images </h3>
+                                            <span style="display:block;height:2px;"></span>
+                                            <div class="autoplay" style="width:100%;margin:auto">
+                                            </div>
+                                        </div>
+                                        <div class="span1" style="background:#ffffff;border:0px"></div>
+                                    </div>
+                                </div>
+                                <!-- Row 2 of color tab ends-->
+                            </div>
+                        </div>
+                <!---------------------------- Visuals for colortab ends ----------------------->
+                <!---------------------------- Visuals for texttab ----------------------------->
+                        <div class="tab-pane fade" id="texttab">
+                            <div class="panel panel-default">
+                                <div class="row-fluid">
+                                    <div class="span4 fancy-tooltip">
+                                        <h2 style="text-align:center"> Popular terms </h2>
+                                        <img src={{cloudSource['gen_source']|safe}} class="img-responsive" alt="Terms Used">
+                                    </div>
+                                    <div class="span4 fancy-tooltip">
+                                        <h2 style="text-align:center"> People tagged </h2>
+                                        <img src={{cloudSource['u_source']|safe}} class="img-responsive" alt="Users tagged">
+                                    </div>
+                                    <div class="span4 fancy-tooltip">
+                                        <h2 style="text-align:center"> Popular hashtags </h2>
+                                        <img src={{cloudSource['h_source']|safe}} class="img-responsive" alt="Hashtags Used">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                <!------------------------- Visuals for texttab -------------------------------->
+                    </div>
+                </div>
+            </div>
+             <!-- /. PAGE INNER  -->
+
+        </div>
+    <!----- Scripts basic tab -->
+    <script>
+        <!-- Converting the numbers to readable form with commas -->
+        var values = document.getElementsByClassName('Numvalue');
+        function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        for (i=0;i<values.length;i++){
+            values[i].innerText=numberWithCommas(parseInt(values[i].innerText));
+        }
+
+        <!-- Fancy ToolTip script -->
+        $(document).ready(fancytooltip);
+        
+        function fancytooltip() {
+            $('.fancy-tooltip').tooltipster({
+            animation: 'fade',
+            delay: 100,
+            theme: 'tooltipster-borderless',
+            contentAsHTML: true,
+            });
+        }
+        
+        
+        
+        
+    </script> 
+    <!----- Scripts basic tab ends -->
+    <!----- Scripts color tab -->
+    <script>
+        // Loading data
+        var tSNE_data = jQuery.parseJSON('{{tSNE_data|tojson}}');
+        var tSNE_plotdata = jQuery.parseJSON('{{results|tojson}}');
+        var plotlyData = tSNE_data["plotlyData"];
+    </script>
+    <script>
+        // First we display the primary images that constitute tSNE-visualization
+        // These go under the selected images heading
+        for (i=0;i<tSNE_plotdata.length;i++){
+            var img_carousel = d3.select(".autoplay")
+                                    .append("div")
+                                    .attr("style", "margin:10px")
+                                        .append("a")
+                                        .attr("target", "_blank")
+                                        .attr("href", tSNE_plotdata[i].marker.url)
+                                            .append("img")
+                                            .attr("src", tSNE_plotdata[i].marker.url)
+                                            .attr("class", "img-responsive fancy-tooltip")
+                                            .attr("title","<div>Likes: "+tSNE_plotdata[i].marker.likes+"<br>Comments: "+tSNE_plotdata[i].marker.comments+"</div>");
+        }
+        //Adding the carousel feature
+        $(document).ready(function(){
+            $('.autoplay').slick({
+              slidesToShow: 4,
+              slidesToScroll: 3,
+              autoplay: true,
+              autoplaySpeed: 1000,
+            });
+        });
+        
+        
+        // Setting the height of tSNE plot same as its width
+        // Getting the screen width
+        var tSNEcount = 0;
+        function drawtSNEscatter(){
+            var scrwidth = window.innerWidth;
+            //var tsnepar = document.getElementById('tSNEparent').getBoundingClientRect().width;
+            // Setting the width of tSNE id
+            if (tSNEcount == 0){
+            var tsnepar0 = $("#tSNEparent").width() - 2;
+            var settSNEhw = d3.select("#tSNE")
+                                .attr("style", "width:"+(tsnepar0/100)*scrwidth+"px;height:"+(tsnepar0/100)*scrwidth+"px");
+                                //.attr("class", n);
+            }
+            if (tSNEcount > 0) {
+            var tsnepar1 = 0.96*document.getElementById('tSNEparent').getBoundingClientRect().width;
+            var settSNEhw = d3.select("#tSNE")
+                                .attr("style", "width:"+tsnepar1+"px;height:"+tsnepar1+"px");
+            }
+            
+            tSNEcount++; 
+            var tSNEPlot = document.getElementById("tSNE"),
+                d3Plot = Plotly.d3,
+                data = [{x:plotlyData.tSNEx, y:plotlyData.tSNEy, type:'scatter',
+                         mode: 'markers', marker:{size:12, color:plotlyData.tSNErgbcol, opacity:0.7},
+                         text:plotlyData.text, img:plotlyData.numGridPts,
+                         hoverinfo:'text', gridImgs:plotlyData.gridPts}],
+                layout = {
+                      xaxis: {
+                                autorange: true,
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                autotick: true,
+                                ticks: '',
+                                showticklabels: false
+                            },
+                      yaxis: {
+                        autorange: true,
+                        showgrid: false,
+                        zeroline: false,
+                        showline: false,
+                        autotick: true,
+                        ticks: '',
+                        showticklabels: false
+                      },
+                    hovermode:"closest",
+                    margin: {
+                        l:20,
+                        r:5,
+                        b:45,
+                        t:25,
+                        pad:1
+                    },
+                    
+                }
+                
+            Plotly.newPlot("tSNE", data, layout, {displaylogo:false, scrollZoom:true,
+                                                  modeBarButtonsToRemove: ['sendDataToCloud', 'hoverCompareCartesian',
+                                                                           'zoomIn2d', 'zoomOut2d']});
+                                                                           
+            tSNEPlot.on('plotly_click', function(data){
+                var this_point = data.points[0];
+                var this_point_index = this_point.pointNumber;
+                var this_point_data = this_point.data;
+                var this_point_images = this_point_data.gridImgs[this_point_index];
+                isotopeGallery(this_point_images);
+            });                                                                           
+        }
+        drawtSNEscatter();
+        window.onresize = drawtSNEscatter;
+        // Making isotope image gallery
+        function isotopeGallery(imageArray) {
+            jQuery('#isotopeImg').empty();
+            var isotopespace = d3.select("#isotopeImg")
+                                    .append("hr")
+                                    .attr("style", "margin-top:50px;margin-bottom:2px")
+            var isotopespace = d3.select("#isotopeImg")
+                                    .append("span")
+                                    .attr("style", "display:block; height: 10px")
+            var isotopeHead = d3.select("#isotopeImg")
+                                    .append("h2")
+                                    .attr("style", "text-align:center;margin:auto")
+                                    .text("Image Gallery");
+            var isotopeSort = d3.select("#isotopeImg")
+                                    .append("span")
+                                    .attr("style", "display:block;height:10px");
+            var isotopeBSpan = d3.select("#isotopeImg")
+                                    .append("h4")
+                                    .attr("style", "text-align:left;margin-left:10px")
+                                    .text("Sort");
+            var isotopeBtnGrp = d3.select("#isotopeImg")
+                                    .append("div")
+                                    .attr("id", "sorts")
+                                    .attr("class", "buttonitp-group")
+                                        .append("buttonitp")
+                                        .attr("class", "buttonitp is-checked")
+                                        .attr("data-sort-by", "original-order")
+                                        .text("Original Order");
+            
+            var sortCat = ["Likes", "Comments"];
+            for(i=0;i<sortCat.length;i++){
+                var isotopeBtn = d3.select(".buttonitp-group")
+                                        .append("buttonitp")
+                                        .attr("class", "buttonitp")
+                                        .attr("data-sort-by", sortCat[i])
+                                        .text(sortCat[i]);
+            }
+            
+            var gridlayout = d3.select("#isotopeImg")
+                                    .append("div")
+                                    .attr("class", "grid");
+            //Adding all the images to the grid
+            var imgAdded = [];
+            for(imgId=0;imgId<imageArray.length;imgId++){
+                if($.inArray(imageArray[imgId].url, imgAdded) == -1){
+                    imgAdded.push(imageArray[imgId].url);
+                    var newImage = d3.select(".grid")
+                                        .append("a")
+                                        .attr("class", "img-item")
+                                        .attr("target", "_blank")
+                                        .attr("href", imageArray[imgId].url);
+                    var newProp = newImage.append("img")
+                                          .attr("src", imageArray[imgId].url)
+                                          .attr("class", "img-responsive fancy-tooltip tooltipstered")
+                                          .attr("style","width:150px;height:150px;padding:3px")
+                                          .attr("title", "<div>Likes:"+imageArray[imgId].likes+"<br>"+"Comments:"+imageArray[imgId].comments+"</div>");
+                    var newProp = newImage.append("p")
+                                              .attr("class", "Likes")
+                                              .attr("style", "display:none")
+                                              .text(imageArray[imgId].likes);
+                    var newProp = newImage.append("p")
+                                              .attr("class", "Comments")
+                                              .attr("style", "display:none")
+                                              .text(imageArray[imgId].comments);
+                    }
+                }
+            fancytooltip();
+
+        // init Isotope
+        var $grid = $('.grid').isotope({
+          itemSelector: '.img-item',
+          layoutMode: 'fitRows',
+          sortAscending: false,
+          getSortData: {
+            Likes: '.Likes parseInt',
+            Comments: '.Comments parseInt',
+          }
+        });
+
+        $('#sorts').on( 'click', 'buttonitp', function() {
+          
+          var sortByValue = $(this).attr('data-sort-by');
+          $grid.isotope({ sortBy: sortByValue });
+        });
+
+        // change is-checked class on buttonitps
+        $('.buttonitp-group').each( function( i, buttonitpGroup ) {
+          var $buttonitpGroup = $( buttonitpGroup );
+          $buttonitpGroup.on( 'click', 'buttonitp', function() {
+            $buttonitpGroup.find('.is-checked').removeClass('is-checked');
+            $( this ).addClass('is-checked');
+          });
+        });
+          
+                
+        } 
+        
+    </script>
+{% endblock %}

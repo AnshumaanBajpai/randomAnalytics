@@ -90,14 +90,15 @@ def convertMatToDict(MatrixData):
     for origin_id, origin_string in enumerate(MatrixData["origin_addresses"]):
         for destination_id, destination_string in enumerate(MatrixData["destination_addresses"]):
             this_data = MatrixData["rows"][origin_id]["elements"][destination_id]
-            this_data_dict = {"origin":origin_string,
-                              "destination":destination_string,
-                              "duration(s)":this_data["duration"]["value"],
-                              "duration_in_traffic(s)":this_data["duration_in_traffic"]["value"],
-                              "distance(m)":this_data["distance"]["value"],
-                              "timestamp":MatrixData["queryTime"],
-                              "status":MatrixData["status"]}
-            dictData.append(this_data_dict)
+            if this_data["status"]=="OK":             
+                this_data_dict = {"origin":origin_string,
+                                  "destination":destination_string,
+                                  "duration(s)":this_data["duration"]["value"],
+                                  "duration_in_traffic(s)":this_data["duration_in_traffic"]["value"],
+                                  "distance(m)":this_data["distance"]["value"],
+                                  "timestamp":MatrixData["queryTime"],
+                                  "status":MatrixData["status"]}
+                dictData.append(this_data_dict)
     
     return dictData
 
@@ -174,21 +175,22 @@ def getETTMatrixJson(fpath_input, fpath_API, fpath_APIRev):
     # Formatting the queries and obtaining the response
     thisAPIQuery = genAPIQuery.format(**APIQueryDict)
     thisAPIQueryRev = genAPIQuery.format(**APIQueryDictRev)
-    
-    queryTime = time.strftime("%m-%d-%Y_%H:%M:%S_%A")
-    ETTMatrix = requests.get(thisAPIQuery).json() #ETT: Estimated Trip Time        
 
+    queryTime = time.strftime("%m-%d-%Y_%H:%M:%S_%A")
+    ETTMatrix = requests.get(thisAPIQuery).json() #ETT: Estimated Trip Time
+    
     queryTimeRev = time.strftime("%m-%d-%Y_%H:%M:%S_%A")
     ETTMatrixRev = requests.get(thisAPIQueryRev).json()
-    
+
     ETTMatrix['queryTime'] = queryTime
     ETTMatrixRev['queryTime'] = queryTimeRev
 
     #outFileName = time.strftime("%Y%m%d-%H%M%S")+'.json'
     #outFileNameRev = time.strftime("%Y%m%d-%H%M%S")+'Rev.json'
-    
+
     # Convert ETTMatrix into a dictionary with database friendly format
     ETTDict = convertMatToDict(ETTMatrix)
+
     ETTDictRev = convertMatToDict(ETTMatrixRev)
 
     # Send the data to AWS mongoDB database
