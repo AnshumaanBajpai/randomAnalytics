@@ -6,3 +6,6 @@ herokuDeploy/senderPasswd.txt
 herokuDeploy/GMA_keyRev.txt
 herokuDeployData
 randomWebAnalytics/randomAnalyticsApp/WorldMap_key.txt
+randomWebAnalytics/cached_files
+randomWebAnalytics/scripts
+randomWebAnalyticsDeploy

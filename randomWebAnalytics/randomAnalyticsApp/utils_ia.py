@@ -257,7 +257,7 @@ def create_tSNE_grid(json_fdir, json_query, query_type):
             plotlyDict['tSNEcomments'].append(valx['marker']['comments'])
             plotlyDict['numGridPts'].append(len(valx['grid_points']))
             plotlyDict['gridPts'].append(valx['grid_points'])
-            plotlyDict['text'].append(valx['marker']['colname']+'<br>'+"Images:"+str(len(valx['grid_points'])))
+            plotlyDict['text'].append("Color:"+valx['marker']['colname']+'<br>'+"Images:"+str(len(valx['grid_points'])))
 
     server_image_loc = os.path.join(cached_images, query_type+'s', json_query)
     if not os.path.isdir(server_image_loc):

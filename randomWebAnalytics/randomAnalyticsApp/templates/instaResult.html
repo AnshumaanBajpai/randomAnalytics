@@ -125,14 +125,14 @@
                                 <div class="panel-body">
                                     <div class="row-fluid">
                                         <div class="span1" style="background:#ffffff;border:0px"></div>
-                                        <div class="span3 fancy-tooltip" style="text-align:center;border:1px solid rgba(0, 0, 0, 0.2)" id="tSNEparent" title="Click a color to see corresponding images">
+                                        <div class="span3 fancy-tooltip" style="text-align:center" id="tSNEparent" title="Click a color to see corresponding images">
                                             <span style="display:block;height:12px;"></span>
                                             <h3 style="margin:auto"> Color Clusters </h3>
                                             <span style="display:block;height:2px;"></span>
                                             <div id="tSNE" style="margin:auto">
                                             </div>
                                         </div>
-                                        <div class="span7" style="text-align:center;border:1px solid rgba(0, 0, 0, 0.2)" id="carouselparent">
+                                        <div class="span7" style="text-align:center" id="carouselparent">
                                             <span style="display:block;height:12px;"></span>
                                             <h3 style="margin:auto"> Selected Images </h3>
                                             <span style="display:block;height:2px;"></span>
@@ -167,6 +167,7 @@
                         </div>
                 <!------------------------- Visuals for texttab -------------------------------->
                     </div>
+                    <h6 style="text-align:right"> Last Crawled on: {{profile['last_crawled']|safe}} </h6>
                 </div>
             </div>
              <!-- /. PAGE INNER  -->
@@ -283,7 +284,7 @@
                         l:20,
                         r:5,
                         b:45,
-                        t:25,
+                        t:10,
                         pad:1
                     },
                     

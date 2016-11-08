@@ -6,12 +6,14 @@
             <div class="span7" style="padding-top:20px;padding-right:10px;padding-left:20px">
                 <form role="form" data-toggle="validator" action="/instaResult/" method="post">
                     <div class="form-group">
-                        <label for="instaq">Enter a username/hashtag:</label>
-                        <input type="text" name="instaquery" class="form-control" id="instaq" placeholder="eg. #IBM" required>
+                        <label for="instaq">Select a username:</label>
+                        <select class="form-control" name="instaquery" id="instaq" type="text">
+                            <option value="@victoriabeckham">@victoriabeckham</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="emailEnter">Email Address:</label>
-                        <input type="email" name="emailId" class="form-control" id="emailEnter" placeholder="eg. abc@xyz.com" required>
+                        <input type="email" name="emailId" class="form-control" id="emailEnter" placeholder="eg. abc@xyz.com">
                     </div>
                     <div class="form-group">
                         <label for="fullname">Full Name:</label>
@@ -21,22 +23,36 @@
                     <br>
                     <br>
                 </form>
-                <h3>Inspiration</h3>
-                <p class="text-justify"> This analysis is inspired from the twitter based <span><a target="_blank" href="https://personality-insights-livedemo.mybluemix.net/">personality insights</a></span> provided by IBM Watson. I started working on this towards the end of my internship at IBM.</p>
-                <p class="text-justify"> Since analayzing all the images from an instagram account takes a while, the application provides instant result for the queries that cached. For other queries that are submitted, the user is expected to provide their email ID and he/she will receive an email as soon as the analysis is done and the results are ready for display.</p>
-                <p class="text-justify"> Please input one of the queries from the following to see a sample analysis. </p>
-                <hr>
-                <h3>Cached queries</h3>
+                <h3>Inspiration:</h3>
+                <ul>
+                    <li>Inspired from the twitter based <span><a target="_blank" href="https://personality-insights-livedemo.mybluemix.net/">personality insights</a></span> provided by IBM Watson</li>
+                    <li>Suggested by my mentor towards the end of my internship at IBM Research Lab, Bangalore</li>
+                </ul>
+                <h3>To do:</h3>
                 <ul> <!-- unordered list -->
-                    <li>@victoriabeckham</li>
+                    <li>Add more usernames to cache memory</li>
+                    <li>Make the application real-time where people can suggest or rather search any instagram user profile</li>
                 </ul>
             </div>
             <!-- Form column ends -->
             <!-- Watson_Logo -->
-            <div class="span5" style="padding-top:4px;padding-right:1px;padding-left:1px;padding-bottom:4px">
-                <img src="../static/img/Watson_Logo.jpg" class="img-responsive" alt="Watson_Logo">
+            <div class="span5" style="padding-top:4px;padding-right:10px;padding-left:1px;padding-bottom:4px">
+                <img src="https://www.ke-next.de/assets/images/1/watson_avatar-03599761.jpg" class="img-responsive fancy-tooltipwoborder" alt="Watson_Logo" title="<div>Do let me know if this image usage <br>violates copyright and <br>I will take it down</div>">
             </div>
             <!-- Watson_Logo ends -->
         </div>
     </div>
+    
+    <script>
+        $(document).ready(fancytooltipwoborder);
+        function fancytooltipwoborder() {
+            $('.fancy-tooltipwoborder').tooltipster({
+            animation: 'fade',
+            delay: 100,
+            theme: 'tooltipster-borderless',
+            contentAsHTML: true,
+            });
+        }
+    </script>
+
 {% endblock %}
