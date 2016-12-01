@@ -7,8 +7,10 @@
 			<div id="sidebar-left" class="span2">
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
-						<li><a href="#" title="<div>Data Collection in progress.<br>Please check after the first Week of Dec'16</div>" class="fancy-tooltip"><span class="hidden-tablet" style="color:#04B4F0"> Chicago, USA</span></a></li>
+						<li><a href="#" title="<div>Data Collection in progress.<br>Please check after the first Week of Dec'16</div>" class="fancy-tooltip chicago" onclick='zoomInto(41.87, -87.63, "chicago");'><span class="hidden-tablet" style="color:#04B4F0"> Chicago, USA</span></a></li>
                         <li><a href="/traffic/"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
+                        <li><span class="hidden-tablet" style="color:#04B4F0" id="result"> USA </span></li>
+                        <li><p><a href="#" id="calculate" onclick='testJS();'>calculate server side</a></li>
 					</ul>
 				</div>
 			</div>
@@ -25,29 +27,49 @@
 </div>
 
 <script>
+    <!-- Fancy ToolTip script -->
+    $(document).ready(fancytooltip);        
+    function fancytooltip() {
+        $('.fancy-tooltip').tooltipster({
+        animation: 'fade',
+        delay: 100,
+        theme: 'tooltipster-borderless',
+        contentAsHTML: true,
+        });
+    }        
+
+    <!-- Initial Map for display -->
     function initMap() {
         var uluru = {lat: 0, lng: 0};
-        var map = new google.maps.Map(document.getElementById('map'), {
+        mapInit = new google.maps.Map(document.getElementById('map'), {
             zoom: 2,
             center: uluru
         });
-        var marker = new google.maps.Marker({
-            position: uluru,
-            map: map
-        });
+    }
+    <!-- Zooming into a given city -->
+    function zoomInto(latVal, lngVal, city){
+        var uluruZoomed = {lat:latVal, lng:lngVal};
+        mapInit.panTo(uluruZoomed);
+        smoothZoom(mapInit, 10, 2);
+    }
+    function smoothZoom (map, max, cnt) {
+        if (cnt >= max) {
+            return;
+        }
+        else {
+            z = google.maps.event.addListener(map, 'zoom_changed', function(event){
+                google.maps.event.removeListener(z);
+                smoothZoom(map, max, cnt + 2);
+            });
+            setTimeout(function(){map.setZoom(cnt)}, 500); // 80ms is what I found to work well on my system -- it might not work well on all systems
+        }
     }
     
-        <!-- Fancy ToolTip script -->
-        $(document).ready(fancytooltip);
-        
-        function fancytooltip() {
-            $('.fancy-tooltip').tooltipster({
-            animation: 'fade',
-            delay: 100,
-            theme: 'tooltipster-borderless',
-            contentAsHTML: true,
-            });
-        }        
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    function testJS(){
+    $.getJSON($SCRIPT_ROOT + '/_add_numbers', {a: 5, b: 3}, function(data) {$("#result").text(data.result);});
+            return false;
+    }
 </script>
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key={{GMAPI}}&callback=initMap">

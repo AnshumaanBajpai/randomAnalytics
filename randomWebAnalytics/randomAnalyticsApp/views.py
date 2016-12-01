@@ -6,7 +6,7 @@ __email__ = "bajpai.anshumaan@gmail.com"
 
 ## Importing the required objects and libraries
 from randomAnalyticsApp import app, utils_ia
-from flask import render_template, request
+from flask import render_template, request, jsonify
 import os
 import json
 from wordcloud import WordCloud, STOPWORDS
@@ -143,3 +143,10 @@ def traffic():
         WMPasswd = fpWMA.readline()
 
     return render_template('traffic.html', GMAPI=WMPasswd)
+    
+    
+@app.route('/_add_numbers')
+def add_numbers():
+    #a = request.args.get('a', 0, type=int)
+    #b = request.args.get('b', 0, type=int)
+    return jsonify(result=5)
