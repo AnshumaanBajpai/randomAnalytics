@@ -270,3 +270,25 @@ def create_tSNE_grid(json_fdir, json_query, query_type):
                                                       "plotlyData":plotlyDict}, indent=1))
     
     return None
+	
+
+def	returnCityData(json_fdir, cityname):
+    '''
+    Function that accesses the cached file for a given city and process it in a proper format
+    
+    @params
+    json_fdir: Location of the data json file
+    cityname: City for which the data has been requested
+    
+    @returns
+    To be Updated
+    '''
+    # Loading the data
+    json2open = os.path.join(json_fdir, cityname+".json")
+    with open(json2open, "r") as cjf:
+        cityJsonData = json.load(cjf)
+    
+    print type(cityJsonData)
+    return None
+    
+returnCityData(r'./../cached_files/traffic/chicago', "chicago")

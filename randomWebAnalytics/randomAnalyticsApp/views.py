@@ -145,8 +145,19 @@ def traffic():
     return render_template('traffic.html', GMAPI=WMPasswd)
     
     
-@app.route('/_add_numbers')
-def add_numbers():
-    #a = request.args.get('a', 0, type=int)
-    #b = request.args.get('b', 0, type=int)
-    return jsonify(result=5)
+@app.route('/getCityData')
+def getCityData():
+    '''
+    Function returns the data for a queried city
+    
+    @params
+    None: Cityname is passed as an argument in the request object
+    
+    @returns
+    Sends the data to the javascript function placeMarker in traffic.html
+    '''
+    cityname = request.args.get('cityname', 0, type=str)
+    cityFileLoc = os.path.join(cached_files, "traffic", cityname)
+    #cityData = utils_ia.returnCityData(cityFileLoc, cityname)
+    
+    return jsonify(result=cityname)

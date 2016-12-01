@@ -10,7 +10,6 @@
 						<li><a href="#" title="<div>Data Collection in progress.<br>Please check after the first Week of Dec'16</div>" class="fancy-tooltip chicago" onclick='zoomInto(41.87, -87.63, "chicago");'><span class="hidden-tablet" style="color:#04B4F0"> Chicago, USA</span></a></li>
                         <li><a href="/traffic/"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
                         <li><span class="hidden-tablet" style="color:#04B4F0" id="result"> USA </span></li>
-                        <li><p><a href="#" id="calculate" onclick='testJS();'>calculate server side</a></li>
 					</ul>
 				</div>
 			</div>
@@ -46,11 +45,12 @@
             center: uluru
         });
     }
-    <!-- Zooming into a given city -->
+    <!-- Zooming into a given city and placing markers -->
     function zoomInto(latVal, lngVal, city){
         var uluruZoomed = {lat:latVal, lng:lngVal};
         mapInit.panTo(uluruZoomed);
         smoothZoom(mapInit, 10, 2);
+		placeMarker(city);
     }
     function smoothZoom (map, max, cnt) {
         if (cnt >= max) {
@@ -66,8 +66,8 @@
     }
     
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    function testJS(){
-    $.getJSON($SCRIPT_ROOT + '/_add_numbers', {a: 5, b: 3}, function(data) {$("#result").text(data.result);});
+    function placeMarker(ncity){
+    $.getJSON($SCRIPT_ROOT + '/getCityData', {cityname: ncity}, function(data) {$("#result").text(data.result);});
             return false;
     }
 </script>
