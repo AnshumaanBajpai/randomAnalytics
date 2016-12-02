@@ -158,6 +158,6 @@ def getCityData():
     '''
     cityname = request.args.get('cityname', 0, type=str)
     cityFileLoc = os.path.join(cached_files, "traffic", cityname)
-    #cityData = utils_ia.returnCityData(cityFileLoc, cityname)
+    cityData = utils_ia.returnCityData(cityFileLoc, cityname)
     
-    return jsonify(result=cityname)
+    return jsonify(result=cityData)

@@ -3,6 +3,7 @@
 # Importing the required libraries and models
 import os
 import json
+import ast
 import string
 import collections
 import numpy as np
@@ -21,6 +22,7 @@ from flask import render_template, request
 cached_files = r'./cached_files/'
 scripts_path = r'./scripts/'
 cached_images = r'./randomAnalyticsApp/static/img/cached_images/'
+cached_traffic = r'./randomAnalyticsApp/static/trafficData/'
 server_images = os.path.join('..','static','img','cached_images')
 
 
@@ -283,12 +285,48 @@ def	returnCityData(json_fdir, cityname):
     @returns
     To be Updated
     '''
-    # Loading the data
-    json2open = os.path.join(json_fdir, cityname+".json")
-    with open(json2open, "r") as cjf:
-        cityJsonData = json.load(cjf)
+    # We perform data analysis if not performed previously
+    server_traffic_cache = os.path.join(cached_traffic, cityname)
+    if not os.path.isdir(server_traffic_cache):
+        os.mkdir(server_traffic_cache)
+        # Loading the data and setting up data structures
+        routeList=[]
+        locations = []
+        json2open = os.path.join(json_fdir, cityname+".json")
+        with open(json2open, "r") as cjf:
+            for line in cjf:
+                routeDict = ast.literal_eval(line)
+                routeList.append(routeDict)
+                if routeDict['origin'] not in locations:
+                    locations.append(routeDict['origin'])
+                if routeDict['destination'] not in locations:
+                    locations.append(routeDict['destination'])
+
+        # Coding locations
+        locationCodes = {locations[i]:"L"+str(i) for i in range(len(locations))}
+        
+        routeCodes = []
+        for routeDict in routeList:
+            if locationCodes[routeDict["origin"]]+"-"+locationCodes[routeDict["destination"]] not in routeCodes:
+                routeCodes.append(locationCodes[routeDict["origin"]]+"-"+locationCodes[routeDict["destination"]])
+        
+        # A dictionary to divide the data into specific routes
+        indivRouteDict = {i:[] for i in routeCodes}
+        for routeDict in routeList:
+            # Extracting components from this route
+            durTraff = routeDict['duration_in_traffic(s)']
+            distance = routeDict['distance(m)']
+            dur = routeDict['duration(s)']
+            date, time, day = routeDict['timestamp'].split("_")
+            thisDict = {"durInTraffic":durTraff, "distance":distance,
+                        "duration":dur, "date":date, "time":time, "day":day}
+            indivRouteDict[locationCodes[routeDict['origin']]+"-"+locationCodes[routeDict['destination']]].append(thisDict)
+        
+        with open(os.path.join(server_traffic_cache, "codes.json"), "wb") as stccj:
+            stccj.write(json.dumps(locationCodes, indent=1))
+        
+        for key, val in indivRouteDict.iteritems():
+            with open(os.path.join(server_traffic_cache, key+".json"), "wb") as stj:
+                stj.write(json.dumps(val, indent=1))
     
-    print type(cityJsonData)
-    return None
-    
-returnCityData(r'./../cached_files/traffic/chicago', "chicago")
+    return cityname+"rrr"
