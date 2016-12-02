@@ -274,14 +274,12 @@ def create_tSNE_grid(json_fdir, json_query, query_type):
     return None
 	
 
-def	returnCityData(json_fdir, cityname):
+def	genCityData(json_fdir, cityname):
     '''
-    Function that accesses the cached file for a given city and process it in a proper format
-    
+    Function that accesses the cached file for a given city and process it in a proper format    
     @params
     json_fdir: Location of the data json file
     cityname: City for which the data has been requested
-    
     @returns
     To be Updated
     '''
@@ -322,11 +320,20 @@ def	returnCityData(json_fdir, cityname):
                         "duration":dur, "date":date, "time":time, "day":day}
             indivRouteDict[locationCodes[routeDict['origin']]+"-"+locationCodes[routeDict['destination']]].append(thisDict)
         
+        # Converting the location codes to a list format
+        locationCodesListDict = {"location":[], "code":[]}
+        for key, val in locationCodes.iteritems():
+            if "10000" not in key:
+                locationCodesListDict["location"].append(key)
+                locationCodesListDict["code"].append(val)
+        
+        # Saving the data for codes and routes
         with open(os.path.join(server_traffic_cache, "codes.json"), "wb") as stccj:
-            stccj.write(json.dumps(locationCodes, indent=1))
+            stccj.write(json.dumps(locationCodesListDict, indent=1))
         
         for key, val in indivRouteDict.iteritems():
-            with open(os.path.join(server_traffic_cache, key+".json"), "wb") as stj:
-                stj.write(json.dumps(val, indent=1))
-    
-    return cityname+"rrr"
+            if key.split("-")[0] in locationCodesListDict["code"] and key.split("-")[1] in locationCodesListDict["code"]:
+                with open(os.path.join(server_traffic_cache, key+".json"), "wb") as stj:
+                    stj.write(json.dumps(val, indent=1))
+
+    return None

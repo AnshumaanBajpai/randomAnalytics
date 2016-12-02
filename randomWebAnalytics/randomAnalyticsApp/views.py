@@ -17,6 +17,7 @@ cached_files = r'./cached_files/'
 scripts_path = r'./scripts/'
 cached_images = r'./randomAnalyticsApp/static/img/cached_images/'
 server_images = os.path.join('..','static','img','cached_images')
+cached_traffic = r'./randomAnalyticsApp/static/trafficData/'
 
 ###############################################################################
 ## Defining Web address links
@@ -158,6 +159,41 @@ def getCityData():
     '''
     cityname = request.args.get('cityname', 0, type=str)
     cityFileLoc = os.path.join(cached_files, "traffic", cityname)
-    cityData = utils_ia.returnCityData(cityFileLoc, cityname)
+    # Generating processed data for city if not generated already
+    processedCityDataLoc = os.path.join(cached_traffic, cityname)
+    if os.path.isdir(processedCityDataLoc):
+        pass
+    else:
+        utils_ia.genCityData(cityFileLoc, cityname)
     
-    return jsonify(result=cityData)
+    # Loading the markers and all the location codes
+    allCityProFiles = os.listdir(processedCityDataLoc)
+    allCityProFiles.remove("codes.json")
+    
+    with open(os.path.join(processedCityDataLoc, "codes.json")) as cj:
+        locCodes = json.load(cj)
+    # Now allRoutes above are a list of filenames defining the data for the route
+    route2Mark = []
+    for route in allCityProFiles:
+        routeCode = route[:-5].split("-")
+        if routeCode[0] != routeCode[1]:
+            route2Mark.append(routeCode)
+    
+    unique2wayRoutes = [rstr.split("--") for rstr in set(["--".join(sorted(list(set(i)))) for i in route2Mark])]
+    # Creating code-location mapping
+    codeLocationMap = {"Pt1C":[], "Pt2C":[], "Pt1L":[], "Pt2L":[]}
+    for routeInfo in unique2wayRoutes:
+        codeLocationMap["Pt1C"].append(routeInfo[0])
+        codeLocationMap["Pt2C"].append(routeInfo[1])
+        codeLocationMap["Pt1L"].append(locCodes["location"][locCodes["code"].index(routeInfo[0])])
+        codeLocationMap["Pt2L"].append(locCodes["location"][locCodes["code"].index(routeInfo[1])])
+        
+    # Converting the location code dictionary to a list where each element is a dictionary with
+    # all information about the given point
+    locationList = []
+    keysList = locCodes.keys()
+    for locId in range(len(locCodes['code'])):
+        locationList.append({"code":locCodes['code'][locId], "location":locCodes['location'][locId],
+                             "geoCode":locCodes['geoCode'][locId], "name":locCodes['name'][locId]})
+    
+    return jsonify(locationList)
