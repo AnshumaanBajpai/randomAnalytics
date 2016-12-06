@@ -8,8 +8,12 @@
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
 						<li><a href="#" title="<div>Data Collection in progress.<br>Please check after the first Week of Dec'16</div>" class="fancy-tooltip chicago" onclick='zoomInto(41.87, -87.63, "chicago");'><span class="hidden-tablet" style="color:#04B4F0"> Chicago, USA</span></a></li>
-                        <li><a href="/traffic/"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
-                        <li><span class="hidden-tablet" style="color:#04B4F0" id="result"> USA </span></li>
+                        <li><a href="#"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
+                        <span style="display:block; height:75px;"></span>
+
+                        <!-- A form that will display the address selection made by user -->
+                        <div id="locations" style="padding:5px">
+                        </div>
 					</ul>
 				</div>
 			</div>
@@ -17,7 +21,8 @@
 			
 			<!-- start: Content -->
             <div id="content" class="span10">
-                <div id="map"></div>           
+                <div id="routeAnalysis"></div>        
+                <div id="map"></div>   
             </div>
 			<!-- end: Content -->
             
@@ -39,6 +44,7 @@
 
     <!-- Initial Map for display -->
     function initMap() {
+        $( "#map" ).empty();
         var uluru = {lat: 0, lng: 0};
         mapInit = new google.maps.Map(document.getElementById('map'), {
             zoom: 2,
@@ -47,10 +53,12 @@
     }
     <!-- Zooming into a given city and placing markers -->
     function zoomInto(latVal, lngVal, city){
+        initMap();
         var uluruZoomed = {lat:latVal, lng:lngVal};
         mapInit.panTo(uluruZoomed);
         smoothZoom(mapInit, 12, 2);
 		placeMarker(mapInit, city);
+        buildInputForm();
     }
     function smoothZoom (map, max, cnt) {
         if (cnt >= max) {
@@ -64,95 +72,76 @@
             setTimeout(function(){map.setZoom(cnt)}, 500); // 80ms is what I found to work well on my system -- it might not work well on all systems
         }
     }
-    
+    //Placing the markers on the map
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     function placeMarker(mapObj, ncity){
-        $.getJSON($SCRIPT_ROOT + '/getCityData', {cityname: ncity}, function(data) {
-                                                                        $("#result").text(data[0].geoCode[0]);
-                                                                        
-                                                                        a = data
-                                                                        
-                                                                        // Load the station data. When the data comes back, create an overlay.
-                                                                        var overlay = new google.maps.OverlayView();
+        $.getJSON($SCRIPT_ROOT + '/getCityData', {cityname: ncity}, function(data) {        
+            for (i=0; i<data.length; i++) {
+                if (data[i].color=="green") {
+                    iconLink = "http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png"
+                } else {
+                    iconLink = "http://maps.google.com/mapfiles/kml/shapes/placemark_square_highlight.png"
+                }
+                var marker = new google.maps.Marker({
+                                            map: mapObj,
+                                            position: new google.maps.LatLng(data[i].geoCode[0], data[i].geoCode[1]),
+                                            title: data[i].name,
+                                            animation: google.maps.Animation.DROP,
+                                            icon: iconLink,
+                                            name: data[i].name,
+                                            code: data[i].code,
+                                            location: data[i].location,
+                                            color: data[i].color
+                });
+                google.maps.event.addListener(marker, 'click', function() {
+                                                if ($("#Loc1").attr("value")=="") {
+                                                    $("#Loc1").attr("value", this.name);
+                                                } else {
+                                                    $("#Loc2").attr("value", this.name);
+                                                }
+                });
+                
+                
 
-                                                                        // Add the container when the overlay is added to the map.
-                                                                        overlay.onAdd = function() {
-                                                                            var layer = d3.select(this.getPanes().overlayLayer).append("div")
-                                                                                .attr("class", "stations");
-
-                                                                            // Draw each marker as a separate SVG element.
-                                                                            // We could use a single SVG, but what size would it have?
-                                                                            overlay.draw = function() {
-                                                                              var projection = this.getProjection(),
-                                                                                  padding = 10;
-
-                                                                              var marker = layer.selectAll("svg")
-                                                                                  .data(a)
-                                                                                  .each(transform) // update existing markers
-                                                                                .enter().append("svg")
-                                                                                  .each(transform)
-                                                                                  .attr("class", "marker");
-
-                                                                              // Add a circle.
-                                                                              marker.append("circle")
-                                                                                  .attr("r", 4.5)
-                                                                                  .attr("cx", padding)
-                                                                                  .attr("cy", padding);
-
-                                                                              // Add a label.
-/*                                                                              marker.append("text")
-                                                                                  .attr("x", padding + 7)
-                                                                                  .attr("y", padding)
-                                                                                  .attr("dy", ".31em")
-                                                                                  .text(function(d) { return d.name; });
-*/
-                                                                              function transform(d) {
-                                                                                d = new google.maps.LatLng(d.geoCode[0], d.geoCode[1]);
-                                                                                d = projection.fromLatLngToDivPixel(d);
-                                                                                return d3.select(this)
-                                                                                    .style("left", (d.x - padding) + "px")
-                                                                                    .style("top", (d.y - padding) + "px");
-                                                                              }
-                                                                            };
-                                                                          };
-
-                                                                          // Bind our overlay to the map…
-                                                                          overlay.setMap(mapObj);
-                                                                                                                                   
-                                                                                                
-
-
-
-
-                        
-                                                                        
-                                                                        
-/*                                                                        geocoder = new google.maps.Geocoder();
-                                                                        // Iterate over all the data points and place marker on the map
-                                                                        // for(i=0; i<data.allRoutes["Pt1C"].length; i++) {
-                                                                        for(i=0; i<11; i++) {
-                                                                            var address = data.allRoutes["Pt2L"][i];
-                                                                            geocoder.geocode( { 'address': address}, function(results, status) {
-                                                                                if (status == google.maps.GeocoderStatus.OK) {
-                                                                                    var marker = new google.maps.Marker({
-                                                                                    map: mapObj,
-                                                                                    position: results[0].geometry.location
-                                                                                });
-                                                                                } else {
-                                                                                    alert('Geocode was not successful for the following reason: ' + status);
-                                                                                }
-                                                                                
-                                                                            });
-                                                                            
-                                                                        }
-*/                                                                    }
-        );
-        return false;
+            }
+        });
+        return false;        
     }
-    
-   
-    
-    
+    //Creating a submit form for the city
+    function buildInputForm(){
+        $( "#locations" ).empty();
+        var locationForm = d3.select("#locations");
+        
+        var formElements = locationForm.append("div")
+                                        .attr("class", "form-group");
+        var formInputLabel = formElements.append("label")
+                                         .attr("style", "color:#04B4F0;")
+                                         .text("Select 2 points on the map:");
+        var formInput1 = formElements.append("input")
+                                        .attr("type", "text")
+                                        .attr("id", "Loc1")
+                                        .attr("name", "Loc1")
+                                        .attr("value", "")
+                                        .attr("data-code", "")
+                                        .attr("data-location", "")
+                                        .attr("data-color", "")
+                                        .attr("style", "max-width:75%");
+        var formInput2 = formElements.append("input")
+                                        .attr("type", "text")
+                                        .attr("id", "Loc2")
+                                        .attr("name", "Loc2")
+                                        .attr("value", "")
+                                        .attr("data-code", "")
+                                        .attr("data-location", "")
+                                        .attr("data-color", "")
+                                        .attr("style", "max-width:75%");
+        var formSubmit = locationForm.append("button")
+                                        .attr("class", "btn btn-default")
+                                        .attr("style", "background-color:#04B4F0;color:#ffffff")
+                                        .attr("onclick", "displayAnalysis();")
+                                        .text("Submit");
+    }
+
 </script>
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key={{GMAPI}}&callback=initMap">

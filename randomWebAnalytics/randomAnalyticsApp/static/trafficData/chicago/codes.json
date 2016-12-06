@@ -54,5 +54,19 @@
   "The Art Institute of Chicago", 
   "Home: Millenium St", 
   "Toyota Park"
+ ],
+ "color": [
+  "red", 
+  "red", 
+  "red", 
+  "red", 
+  "red", 
+  "red", 
+  "red", 
+  "red", 
+  "green", 
+  "red", 
+  "green", 
+  "red"
  ]
 }
