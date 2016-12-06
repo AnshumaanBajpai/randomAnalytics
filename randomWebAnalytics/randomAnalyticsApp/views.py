@@ -146,7 +146,7 @@ def traffic():
     return render_template('traffic.html', GMAPI=WMPasswd)
     
     
-@app.route('/getCityData')
+@app.route('/getCityData/')
 def getCityData():
     '''
     Function returns the data for a queried city
@@ -182,3 +182,33 @@ def getCityData():
                              "geoCode":locCodes['geoCode'][locId], "name":locCodes['name'][locId], "color":locCodes['color'][locId]})
        
     return jsonify(locationList)
+    
+   
+@app.route('/getThisRoute/')
+def getThisRoute():
+    '''
+    Function returns the data for a specific requested route
+    @params
+    None: pt1C, pt2C, pt1V, pt2V are passed as the argument for the request and are 
+    the point codes and names for the two points that have been selected by the user
+    
+    @returns
+    Send the data for the requested route to the javascript function obtainAnalysisData in traffic.html
+    '''
+    # Location codes
+    pt1Cd = request.args.get('pt1C', 0, type=str)
+    pt2Cd = request.args.get('pt2C', 0, type=str)
+    # Location names
+    pt1Vl = request.args.get('pt1V', 0, type=str)
+    pt2Vl = request.args.get('pt2V', 0, type=str)
+    # City
+    cityname = request.args.get('citygTR', 0, type=str)
+    
+    # Read data for from pt1 to pt2
+    cityDataDir = os.path.join(cached_traffic, cityname)
+    file1to2 = os.path.join(cityDataDir, pt1Cd+"-"pt2Cd+".json")
+    file2to1 = os.path.join(cityDataDir, pt2Cd+"-"pt1Cd+".json")
+    
+    
+    
+    return jsonify("a")

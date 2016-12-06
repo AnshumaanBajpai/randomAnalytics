@@ -58,7 +58,7 @@
         mapInit.panTo(uluruZoomed);
         smoothZoom(mapInit, 12, 2);
 		placeMarker(mapInit, city);
-        buildInputForm();
+        buildInputForm(city);
     }
     function smoothZoom (map, max, cnt) {
         if (cnt >= max) {
@@ -75,7 +75,7 @@
     //Placing the markers on the map
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     function placeMarker(mapObj, ncity){
-        $.getJSON($SCRIPT_ROOT + '/getCityData', {cityname: ncity}, function(data) {        
+        $.getJSON($SCRIPT_ROOT + '/getCityData/', {cityname: ncity}, function(data) {        
             for (i=0; i<data.length; i++) {
                 if (data[i].color=="green") {
                     iconLink = "http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png"
@@ -96,19 +96,27 @@
                 google.maps.event.addListener(marker, 'click', function() {
                                                 if ($("#Loc1").attr("value")=="") {
                                                     $("#Loc1").attr("value", this.name);
+                                                    $("#Loc1").attr("data-code", this.code);
+                                                    $("#Loc1").attr("data-location", this.location);
+                                                    $("#Loc1").attr("data-color", this.color);
                                                 } else {
-                                                    $("#Loc2").attr("value", this.name);
+                                                    $("#Loc2").attr("value", $("#Loc1").attr("value"));
+                                                    $("#Loc2").attr("data-code", $("#Loc1").attr("data-code"));
+                                                    $("#Loc2").attr("data-location", $("#Loc1").attr("data-location"));
+                                                    $("#Loc2").attr("data-color", $("#Loc1").attr("data-color"));
+                                                    
+                                                    $("#Loc1").attr("value", this.name);
+                                                    $("#Loc1").attr("data-code", this.code);
+                                                    $("#Loc1").attr("data-location", this.location);
+                                                    $("#Loc1").attr("data-color", this.color);
                                                 }
                 });
-                
-                
-
             }
         });
         return false;        
     }
     //Creating a submit form for the city
-    function buildInputForm(){
+    function buildInputForm(city_bif){
         $( "#locations" ).empty();
         var locationForm = d3.select("#locations");
         
@@ -138,8 +146,36 @@
         var formSubmit = locationForm.append("button")
                                         .attr("class", "btn btn-default")
                                         .attr("style", "background-color:#04B4F0;color:#ffffff")
-                                        .attr("onclick", "displayAnalysis();")
+                                        .attr("onclick", "obtainAnalysisData("+city_bif+");")
                                         .text("Submit");
+    }
+    // Function to present the display analysis
+    function obtainAnalysisData(city_oad){
+        // Obtaining the route for which the analysis needs to be presented
+        var locFC = $("#Loc1").attr("data-code");
+        var locSC = $("#Loc2").attr("data-code");
+        var locFV = $("#Loc1").attr("value");
+        var locSV = $("#Loc2").attr("value");
+        var locFCol = $("#Loc1").attr("data-color");
+        var locSCol = $("#Loc2").attr("data-color");
+
+        if (locFC==locSC){
+            swal({
+            title:"Oh Come on!!!", 
+            text:"You gotta select 2 different points mate! \n (Note: Imagine Australian Accent)", 
+            imageUrl:"http://pix.iemoji.com/images/emoji/apple/ios-9/256/pouting-face.png"
+            });
+        } else if (locFCol=="red" && locSCol=="red"){
+            swal({
+            title:"Atleast one address needs to be green", 
+            text:"Google allows only so many queries for free", 
+            imageUrl: "https://cdn.shopify.com/s/files/1/1061/1924/files/Sad_Face_Emoji.png?9898922749706957214"
+            });            
+        } else {
+            $.getJSON($SCRIPT_ROOT + '/getThisRoute/', {pt1C: locFC, pt2C: locSC, pt1V: locFV, pt2V: locSV, citygTR: city_oad}, function(data) {
+            return false;
+        });
+        }
     }
 
 </script>
