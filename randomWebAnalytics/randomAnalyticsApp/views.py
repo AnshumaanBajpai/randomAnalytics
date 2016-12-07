@@ -204,11 +204,13 @@ def getThisRoute():
     # City
     cityname = request.args.get('citygTR', 0, type=str)
     
+    # Obtain the data in the required form
     # Read data for from pt1 to pt2
     cityDataDir = os.path.join(cached_traffic, cityname)
-    file1to2 = os.path.join(cityDataDir, pt1Cd+"-"pt2Cd+".json")
-    file2to1 = os.path.join(cityDataDir, pt2Cd+"-"pt1Cd+".json")
+    file1to2 = os.path.join(cityDataDir, pt1Cd+"-"+pt2Cd+".json")
     
+    heatMapData = utils_ia.cityHeatMapData(file1to2)
+        
+    data2ret = {"origin":pt1Vl, "dest":pt2Vl, "data":heatMapData}
     
-    
-    return jsonify("a")
+    return jsonify(data2ret)

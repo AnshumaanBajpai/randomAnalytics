@@ -337,3 +337,43 @@ def	genCityData(json_fdir, cityname):
                     stj.write(json.dumps(val, indent=1))
 
     return None
+    
+
+def cityHeatMapData(fname):
+    '''
+    Function processes the data for the given route file
+    
+    @params
+    fname: Data file for a given route
+    
+    @return
+    Dictionary with the data for making heatmap
+    '''
+    ## Load the file
+    with open(fname, "rb") as rfj:
+        routeData = json.load(rfj)
+    print os.path.isfile(fname)
+    
+    days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+    times = ["12p"]+[str(i)+'a' for i in range(1,13)]+[str(i)+'p' for i in range(1,12)]
+    
+    # Create output data list
+    heatMapDict = {}
+    for d in days:
+        for t in times:
+            heatMapDict[d+"-"+t] = []
+    
+    # Populate the data list
+    for trip in routeData:
+        thisDay = trip["day"][0:2]
+        thisTimeId = int(trip["time"][0:2])
+        thisTime = times[thisTimeId]
+        heatMapDict[thisDay+"-"+thisTime].append(float(trip["durInTraffic"])/60.0)
+    
+    # Convert the heatMapDict into a list of dictionary suitable for d3.js plotting
+    heatMapList = []
+    for key, val in heatMapDict.iteritems():
+        thisD, thisT = key.split("-")
+        heatMapList.append({"day":thisD, "hour":thisT, "all":val, "mean":np.mean(val), "sdev":np.std(val)})
+    
+    return heatMapList
