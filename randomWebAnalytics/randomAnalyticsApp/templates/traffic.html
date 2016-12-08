@@ -8,7 +8,7 @@
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
 						<li><a href="#" title="<div>Data Collection in progress.<br>Please check after the first Week of Dec'16</div>" class="fancy-tooltip chicago" onclick='zoomInto(41.87, -87.63, "chicago");'><span class="hidden-tablet" style="color:#04B4F0"> Chicago, USA</span></a></li>
-                        <li><a href="#"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
+                        <li><a href="/traffic/"><span class="hidden-tablet" style="color:#04B4F0"> New York City, USA</span></a></li>
                         <span style="display:block; height:75px;"></span>
 
                         <!-- A form that will display the address selection made by user -->
@@ -59,7 +59,7 @@
         initMap();
         var uluruZoomed = {lat:latVal, lng:lngVal};
         mapInit.panTo(uluruZoomed);
-        smoothZoom(mapInit, 12, 2);
+        smoothZoom(mapInit, 12, 4);
 		placeMarker(mapInit, city);
         buildInputForm(city);
     }
@@ -207,46 +207,50 @@
         }
     }
     function displayData(plotData){
+        $("#heatchart").empty();
         var origin = plotData.origin;
         var destination = plotData.dest;
         var routedata = plotData.data;
-        alert(origin);
-        heatMapWidth = Math.max($("#map").width(), 600);
-        var margin = { top: 25, right: 10, bottom: 25, left: 20 },
+        heatMapWidth = Math.max($("#map").width());
+        var margin = { top: heatMapWidth/100, right: heatMapWidth/100, bottom: heatMapWidth/100, left: heatMapWidth/100 },
             width = 0.98*heatMapWidth - margin.left - margin.right,
-            height = 430 - margin.top - margin.bottom,
             gridSize = Math.floor(width / 24),
+            height = 9*gridSize - margin.top - margin.bottom,
             legendElementWidth = gridSize*2,
-            buckets = 9,
             colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
             days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
             times = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a", "10a", "11a", "12a", "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", "10p", "11p", "12p"];
             
         var svg = d3.select("#heatchart").append("svg")
                                         .attr("width", width + margin.left + margin.right)
-                                        .attr("height", height + margin.top + margin.bottom)
+                                        .attr("height", height + margin.top + margin.bottom+gridSize)
                                         .style("padding-left", "20px")
                                         .append("g")
                                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", gridSize/3 )
+            .attr("text-anchor", "middle")  
+            .style("font-size", "20px") 
+            .text("Estimated time (min): " + origin + "   \u2192   " + destination);
             
         var dayLabels = svg.selectAll(".dayLabel")
                             .data(days)
                             .enter().append("text")
                                     .text(function (d) { return d; })
                                     .attr("x", 0)
-                                    .attr("y", function (d, i) { return i * gridSize; })
+                                    .attr("y", function (d, i) { return (i+1) * gridSize; })
                                     .style("text-anchor", "end")
                                     .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
                                     .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
-        
-        
         
         var timeLabels = svg.selectAll(".timeLabel")
                             .data(times)
                             .enter().append("text")
                                     .text(function(d) { return d; })
                                     .attr("x", function(d, i) { return i * gridSize; })
-                                    .attr("y", 0)
+                                    .attr("y", 0 + gridSize)
                                     .style("text-anchor", "middle")
                                     .attr("transform", "translate(" + gridSize / 2 + ", -6)")
                                     .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
@@ -261,41 +265,39 @@
 
         cards.enter().append("rect")
                         .attr("x", function(d) { return times.indexOf(d.hour)*gridSize; })
-                        .attr("y", function(d) { return days.indexOf(d.day)*gridSize; })
-                        .attr("rx", 4)
-                        .attr("ry", 4)
+                        .attr("y", function(d) { return days.indexOf(d.day)*gridSize + gridSize; })
+                        .attr("rx", 12)
+                        .attr("ry", 12)
                         .attr("class", "hour bordered")
                         .attr("width", gridSize)
                         .attr("height", gridSize)
                         .style("fill", colors[1])
                         .append("title")
-                            .text(function(d) { return d.value; });
+                            .text(function(d) { return Math.round(d.value); });
                             
-        d3.selectAll(".hour").transition().duration(1500).style("fill", function(d) { return colorScale(d.value); });
+        d3.selectAll(".hour").transition().duration(1000).style("fill", function(d) { return colorScale(d.value); });
         cards.exit().remove();
 
         var legend = svg.selectAll(".legend")
-              .data([0].concat(colorScale.quantiles()), function(d) { return d; });
-
-          legend.enter().append("g")
-              .attr("class", "legend");
-
-          legend.append("rect")
-            .attr("x", function(d, i) { return legendElementWidth * i; })
-            .attr("y", height)
-            .attr("width", legendElementWidth)
-            .attr("height", gridSize / 2)
-            .style("fill", function(d, i) { return colors[i]; });
-
-          legend.append("text")
-            .attr("class", "mono")
-            .text(function(d) { return "≥ " + Math.round(d); })
-            .attr("x", function(d, i) { return legendElementWidth * i; })
-            .attr("y", height + gridSize);
-
-          legend.exit().remove();                               
-*/        return false;
+              .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+              .enter().append("g")
+                .attr("class", "legend")
+                .append("rect")
+                    .attr("x", function(d, i) { return legendElementWidth * i; })
+                    .attr("y", height)
+                    .attr("width", legendElementWidth)
+                    .attr("height", gridSize / 2)
+                    .style("fill", function(d, i) { return colors[i]; });
+                    
+                    d3.selectAll(".legend").append("text")
+                        .attr("class", "")
+                        .text(function(d) { return "≥ " + Math.round(d); })
+                        .attr("x", function(d, i) { return legendElementWidth * i; })
+                        .attr("y", height + gridSize)
+                        .exit().remove();
+        return false;
     }
+    d3.select(window).on('resize', obtainAnalysisData); 
 
 </script>
 <script async defer
