@@ -22,6 +22,9 @@
 			<!-- start: Content -->
             <div id="content" class="span10">
                 <div id="heatchart"></div>
+                <div id="hrPlot"></div>
+                <div id="hrDayPlot"></div>
+                <div id="DayPlot"></div>
                 <div id="map"></div>   
             </div>
 			<!-- end: Content -->
@@ -171,6 +174,7 @@
     // Function to present the display analysis
     function obtainAnalysisData(){
         // Obtaining the route for which the analysis needs to be presented
+        $("#heatchart").empty();
         var locFC = $("#From").attr("data-code");
         var locSC = $("#To").attr("data-code");
         var locFV = $("#From").attr("value");
@@ -207,9 +211,9 @@
         var destination = plotData.dest;
         var routedata = plotData.data;
         alert(origin);
-        
-        var margin = { top: 50, right: 0, bottom: 100, left: 30 },
-            width = 960 - margin.left - margin.right,
+        heatMapWidth = Math.max($("#map").width(), 600);
+        var margin = { top: 25, right: 10, bottom: 25, left: 20 },
+            width = 0.98*heatMapWidth - margin.left - margin.right,
             height = 430 - margin.top - margin.bottom,
             gridSize = Math.floor(width / 24),
             legendElementWidth = gridSize*2,
@@ -247,37 +251,30 @@
                                     .attr("transform", "translate(" + gridSize / 2 + ", -6)")
                                     .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
                                     
-        var heatmapChart = function(data){
-                            var colorScale = d3.scale.quantile()
-                                                    .domain([0, buckets - 1, d3.max(data, function (d) { return d.mean; })])
-                                                    .range(colors);
+        var colorScale = d3.scaleQuantile()
+                                .domain([d3.min(plotData.data, function (d) { return d.value; }), d3.max(plotData.data, function (d) { return d.value; })])
+                                .range(colors);
+        minval = d3.min(plotData.data, function (d) { return d.value; });
+        maxval = d3.max(plotData.data, function (d) { return d.value; });
+        var cards = svg.selectAll(".hour")
+                        .data(plotData.data, function(d) {return days.indexOf(d.day)+':'+times.indexOf(d.hour);});
 
-                            var cards = svg.selectAll(".hour")
-                                            .data(data, function(d) {return d.day+':'+d.hour;});
+        cards.enter().append("rect")
+                        .attr("x", function(d) { return times.indexOf(d.hour)*gridSize; })
+                        .attr("y", function(d) { return days.indexOf(d.day)*gridSize; })
+                        .attr("rx", 4)
+                        .attr("ry", 4)
+                        .attr("class", "hour bordered")
+                        .attr("width", gridSize)
+                        .attr("height", gridSize)
+                        .style("fill", colors[1])
+                        .append("title")
+                            .text(function(d) { return d.value; });
+                            
+        d3.selectAll(".hour").transition().duration(1500).style("fill", function(d) { return colorScale(d.value); });
+        cards.exit().remove();
 
-                            cards.append("title");
-        }
-
-
-
-          cards.enter().append("rect")
-              .attr("x", function(d) { return (d.hour - 1) * gridSize; })
-              .attr("y", function(d) { return (d.day - 1) * gridSize; })
-              .attr("rx", 4)
-              .attr("ry", 4)
-              .attr("class", "hour bordered")
-              .attr("width", gridSize)
-              .attr("height", gridSize)
-              .style("fill", colors[0]);
-
-          cards.transition().duration(1000)
-              .style("fill", function(d) { return colorScale(d.value); });
-
-          cards.select("title").text(function(d) { return d.value; });
-          
-          cards.exit().remove();
-
-          var legend = svg.selectAll(".legend")
+        var legend = svg.selectAll(".legend")
               .data([0].concat(colorScale.quantiles()), function(d) { return d; });
 
           legend.enter().append("g")
@@ -296,21 +293,8 @@
             .attr("x", function(d, i) { return legendElementWidth * i; })
             .attr("y", height + gridSize);
 
-          legend.exit().remove();
-
-        });  
-      };
-
-      heatmapChart(datasets[0]);
-
-
-
-        
-                                    
-                                    
-                                    
-        
-        return false;
+          legend.exit().remove();                               
+*/        return false;
     }
 
 </script>

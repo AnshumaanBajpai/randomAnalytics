@@ -374,6 +374,6 @@ def cityHeatMapData(fname):
     heatMapList = []
     for key, val in heatMapDict.iteritems():
         thisD, thisT = key.split("-")
-        heatMapList.append({"day":thisD, "hour":thisT, "all":val, "mean":np.mean(val), "sdev":np.std(val)})
+        heatMapList.append({"day":thisD, "hour":thisT, "all":val, "value":np.mean(val), "sdev":np.std(val)})
     
     return heatMapList
